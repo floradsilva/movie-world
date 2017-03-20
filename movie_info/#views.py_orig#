@@ -1,0 +1,163 @@
+from django.shortcuts import render, render_to_response
+from .models import Movie, Category, Relationship
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
+
+language = None
+genre = None
+sorter = None
+    
+m = Movie.objects.all()
+c = Category.objects.all()
+l = Category.objects.filter(c_type__startswith='Language')
+g = Category.objects.filter(c_type__startswith='Genre')
+ 
+def index(request):
+    m = Movie.objects.all()
+    c = Category.objects.all()
+    l = Category.objects.filter(c_type__startswith='Language')
+    g = Category.objects.filter(c_type__startswith='Genre')
+
+    paginator = Paginator(m, 10)
+    page = request.GET.get('page')
+
+    try:
+        movies = paginator.page(page)
+    except PageNotAnInteger:
+        movies = paginator.page(1)
+    except EmptyPage:
+        movies = paginator.page(paginator.num_pages)
+    return render_to_response('movie_info/list.html', {"movies": movies,'categories': c, 'languages':l, 'genres':g})
+
+def filter_sort(request):
+    if request.GET.get('filter_language', None):
+        if request.GET.get('filter_language') != 'All':
+            global language
+            language = request.GET.get('filter_language')
+
+    if request.GET.get('filter_genre', None):
+        if request.GET.get('filter_genre') != 'All':
+            global genre
+            genre = request.GET.get('filter_genre')
+
+    if request.GET.get('Sort', None):
+        if request.GET.get('Sort') != 'All':
+            global sorter
+            sorter = request.GET.get('Sort')
+
+    #  if language != 'All':
+    #     c_language = Category.objects.filter(value = language)
+    #     movies1 = [x.c_movie.all() for x in c_language]
+        
+    #     movie = []
+    #     for mov in movies1:
+    #         movie += mov
+
+    #     m = [x for x in m if x in movie]
+
+    # if genre != 'All':
+    #     c_genre = Category.objects.filter(value = genre)
+    #     movies1 = [x.c_movie.all() for x in c_genre]
+        
+    #     movie = []
+    #     for mov in movies1:
+    #         movie += mov
+        
+    #     m = [x for x in m if x in movie]
+
+    # if sorter != 'no_sort':
+        
+    #     sortedList = Movie.objects.all().order_by(sorter) 
+    #     m = [x for x in sortedList if x in m]
+
+    if (language != 'All' and genre != 'All' and sorter != 'no_sort') or request.GET.get('lgs', None):
+        #assert False
+        return lgs(request, language, genre, sorter)
+
+    elif language!= 'All'  and genre != 'All': 
+        #assert False
+        #return lg(request, language, genre)
+        pass
+
+    elif (language and sorter) or request.GET.get('ls', None):
+        
+        return ls(request, language, sorter)
+
+    elif genre and sorter:
+        gs(request, genre, sorter)
+
+    elif language:
+        l(request, language)
+
+    elif genre:
+        g(request, genre)
+
+    elif sorter:
+        s(request, sorter)
+
+    else:
+        movies = request.GET.get('movies')
+        return index(request)
+    
+
+def lgs(request, language, genre, sorter):
+        
+    paginator = Paginator(m, 10)
+    page = request.GET.get('lgs')
+    
+    try:
+        movies = paginator.page(page)
+    except PageNotAnInteger:
+        movies = paginator.page(1)
+    except EmptyPage:
+        movies = paginator.page(paginator.num_pages)
+    return render_to_response('movie_info/lgs.html', {"movies": movies, 'categories': c, 'languages':l, 'genres':g})
+
+
+
+def lg(request, language, genre):
+    pass
+
+def ls(request):
+    m = Movie.objects.all()
+    c = Category.objects.all()
+    l = Category.objects.filter(c_type__startswith='Language')
+    g = Category.objects.filter(c_type__startswith='Genre')
+
+    c_language = Category.objects.filter(value = language)
+    movies1 = [x.c_movie.all() for x in c_language]
+        
+    movie = []
+    for mov in movies1:
+        movie += mov
+        
+        m = [x for x in m if x in movie]
+
+    sortedList = Movie.objects.all().order_by(sorter) 
+    m = [x for x in sortedList if x in m]
+
+    
+    paginator = Paginator(m, 10)
+    page = request.GET.get('ls')
+    
+    try:
+        movies = paginator.page(page)
+    except PageNotAnInteger:
+        movies = paginator.page(1)
+    except EmptyPage:
+        movies = paginator.page(paginator.num_pages)
+    return render_to_response('movie_info/ls.html', {"movies": movies, 'categories': c, 'languages':l, 'genres':g})
+    
+
+
+def gs(request, genre, sorter):
+    pass
+
+def l(request, language):
+    pass
+
+def g(request, genre):
+    pass
+
+def s(request, sort):
+    pass

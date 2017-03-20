@@ -1,0 +1,85 @@
+<html>
+<head>
+<style>
+#header{
+background-color:black;
+color:white;
+text-align:center;
+padding:5px;
+}
+#mid_left{
+line-height:30px;
+background-color:#eeeeee;
+height:800px;
+width:900px;
+float:left;
+padding:5px;
+}
+#mid_right{
+width:350px;
+float:left;
+padding:10px;
+}
+#footer{
+background-color:black;
+color:white;
+clear:both;
+text-align:center;
+padding:5px; 
+}
+</style>
+</head>
+<div id = "header">
+<h1>Movie World</h1>
+</div>
+<div id = mid_left>
+{% for movie in movies %}
+{# Each "movie" is a Movie model object. #}
+<li> {{forloop.counter}}. <a href="/movie_info/{{movie.id}}/">{{ movie.title }}</a> <br/>
+  {{movie.movie_length}}<br/>
+</li>
+{% endfor %}
+
+{% if movies.has_previous %}
+<a href="?la={{ movies.previous_page_number }}">previous</a>
+{% endif %}
+
+Page {{ movies.number }} of {{ movies.paginator.num_pages }}.
+
+{% if movies.has_next %}
+<a href="?la={{ movies.next_page_number }}">next</a>
+{% endif %}
+
+</div>
+<div id = mid_right>
+<h3>Filter by:</h3>
+<form action="" method="get">
+  <label> Language:   </label>
+  <select name="filter_language">
+    <option value="All">All</option>
+    {% for language in languages %}
+    <option value="{{language.value}}">{{language.value}}</option>
+    {% endfor %}
+  </select>
+  <br/>
+
+  <label> Genre:   </label>
+  <select name="filter_genre">
+    <option value="All">All</option>
+    {% for genre in genres %}
+    <option value="{{genre.value}}">{{genre.value}}</option>
+    {% endfor %}
+  </select>
+  <br/>
+
+<h3>Sort by:</h3>
+<select name="Sort">
+  <option value="no_sort">All</option>
+  <option value="movie_length">Duration</option>
+  <option value="movie_release_date">Release Date</option>
+</select>
+<br/>
+<br/>
+<input type ='submit' value="Submit">
+</form>
+</div>

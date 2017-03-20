@@ -1,0 +1,43 @@
+<html>
+<head>
+<style>
+#header{
+background-color:black;
+color:white;
+text-align:center;
+padding:5px;
+}
+#mid_left{
+line-height:30px;
+background-color:#eeeeee;
+height:800px;
+width:900px;
+float:left;
+padding:5px;
+}
+#mid_right{
+width:350px;
+float:left;
+padding:10px;
+}
+#footer{
+background-color:black;
+color:white;
+clear:both;
+text-align:center;
+padding:5px; 
+}
+</style>
+</head>
+<div id = "header">
+<h1>Movie World</h1>
+</div>
+<div id = mid_left>
+<h1>Title: {{ movie.title }}</h1>
+<h2><i>Description: {{ movie.description }}</i></h2>
+<p>Duration: {{ movie.movie_length }} minutes</p>
+<p>Release date: {{ movie.movie_release_date }}</p>
+</br></br></br>
+<h3> <a href="{% url 'filter_sort' %}">Main Page </a></h3>
+</div>
+
